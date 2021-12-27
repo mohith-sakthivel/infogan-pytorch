@@ -98,7 +98,7 @@ class InfoGAN(pl.LightningModule):
         if len(categ_code_dims) > 0:
             self.categorical_loss = nn.CrossEntropyLoss()
         if cont_code_dim > 0:
-            self.gaussian_loss = nn.MSELoss()
+            self.gaussian_loss = nn.GaussianNLLLoss(full=True)
 
     def _initialize_samplers(self) -> None:
         if len(self.hparams.categ_code_dims) > 0:
@@ -204,13 +204,15 @@ class InfoGAN(pl.LightningModule):
                     torch.log(torch.ones_like(categ_posterior) / c_dim)
                 q_categ_loss -= (categ_prior - categ_posterior)
                 start_dim += c_dim
-            q_categ_loss = q_categ_loss/len(self.hparams.categ_code_dims)
         # Calculate loss from gaussian latent code prediction
         if self.hparams.cont_code_dim > 0:
-            q_gauss = dist.Independent(dist.Normal(
-                q_pred['gauss_mean'], q_pred['gauss_std']), reinterpreted_batch_ndims=1)
-            q_gauss_loss = self.gaussian_loss(
-                q_gauss.rsample(), c[:, start_dim:])
+            cont_posterior = self.gaussian_loss(c[:, start_dim:],
+                                                q_pred['gauss_mean'],
+                                                q_pred['gauss_std'].square())
+            cont_prior = self.gaussian_loss(c[:, start_dim:],
+                                            torch.zeros_like(q_pred['gauss_mean']),
+                                            torch.ones_like(q_pred['gauss_std']))
+            q_gauss_loss = -(cont_prior - cont_posterior)
         mi_loss = q_categ_loss + q_gauss_loss
 
         self.log("gen_train/adv_loss", adv_loss, on_epoch=False)
@@ -253,13 +255,15 @@ class InfoGAN(pl.LightningModule):
                     torch.log(torch.ones_like(categ_posterior) / c_dim)
                 q_categ_loss -= (categ_prior - categ_posterior)
                 start_dim += c_dim
-            q_categ_loss = q_categ_loss/len(self.hparams.categ_code_dims)
         # Calculate loss from gaussian latent code prediction
         if self.hparams.cont_code_dim > 0:
-            q_gauss = dist.Independent(dist.Normal(
-                q_pred['gauss_mean'], q_pred['gauss_std']), reinterpreted_batch_ndims=1)
-            q_gauss_loss = self.gaussian_loss(
-                q_gauss.rsample(), c[:, start_dim:])
+            cont_posterior = self.gaussian_loss(c[:, start_dim:],
+                                                q_pred['gauss_mean'],
+                                                q_pred['gauss_std'].square())
+            cont_prior = self.gaussian_loss(c[:, start_dim:],
+                                            torch.zeros_like(q_pred['gauss_mean']),
+                                            torch.ones_like(q_pred['gauss_std']))
+            q_gauss_loss = -(cont_prior - cont_posterior)
         mi_loss = q_categ_loss + q_gauss_loss
 
         self.log("disc_train/adv_loss", adv_loss, on_epoch=False)

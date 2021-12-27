@@ -72,7 +72,7 @@ class InfoGANGenerator(nn.Module):
             conv_start_shape[0], feature_maps[0], act=act))
         for i in range(1, len(feature_maps)):
             deconv_modules.append(self._make_deconv_block(feature_maps[i-1], feature_maps[i],
-                                                          act=act, batchnorm=True))
+                                                          act=act, batchnorm=False))
         deconv_modules.append(self._make_deconv_block(feature_maps[-1], img_channels,
                                                       act=nn.Tanh, batchnorm=False))
         self._deconv = nn.Sequential(*deconv_modules)
