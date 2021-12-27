@@ -1,0 +1,23 @@
+# MNIST dataset default config
+lambda_coeff: 1
+feature_maps_gen:
+  - 64
+feature_maps_disc:
+  - 64
+  - 128
+fc_layers_gen: [1024,]
+fc_layers_disc: [1024,]
+img_channels: 1
+noise_dim: 62
+categ_code_dims:
+  - 10
+cont_code_dim: 2
+conv_start_shape_gen: 
+  - 128
+  - 7
+  - 7
+conv_end_shape_disc:
+  - 128
+  - 7
+  - 7
+num_batches: 100

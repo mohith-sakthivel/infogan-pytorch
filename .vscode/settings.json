@@ -1,6 +1,0 @@
-{
-    "python.pythonPath": "/home/mohith/miniconda3/envs/dl/bin/python",
-    "jupyter.jupyterServerType": "local",
-    "python.linting.pylintEnabled": true,
-    "python.linting.enabled": true
-}

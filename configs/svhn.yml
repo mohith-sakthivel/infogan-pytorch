@@ -1,0 +1,29 @@
+# SVHN dataset default config
+lambda_coeff: 1
+feature_maps_gen:
+  - 256
+  - 128
+  - 64
+feature_maps_disc:
+  - 64
+  - 128
+  - 256
+fc_layers_gen: []
+fc_layers_disc: []
+img_channels: 3
+noise_dim: 124
+categ_code_dims:
+  - 10
+  - 10
+  - 10
+  - 10
+cont_code_dim: 4
+conv_start_shape_gen: 
+  - 448
+  - 2
+  - 2
+conv_end_shape_disc:
+  - 256
+  - 4
+  - 4
+num_batches: null

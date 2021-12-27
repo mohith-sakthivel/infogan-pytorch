@@ -1,3 +1,8 @@
-/lightning_logs
-/MNIST
-/test.ipynb
+# temp
+__pycache__/
+
+# logs
+lightning_logs/
+
+# dataset
+data/
